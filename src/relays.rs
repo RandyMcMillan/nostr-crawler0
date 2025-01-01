@@ -49,12 +49,14 @@ impl Relays {
     }
 
     pub fn dump(&self) {
+        let mut count = 0;
         //println!("Relays: {}", self.r.len());
         print!("[\"RELAYS\",");
         for u in &self.r {
-            print!("{{\"{}\"}},", u.to_string());
+            print!("{{\"{}\":\"{}\"}},", count, u.to_string());
+            count +=1;
         }
-        print!("{{\"wss://relay.gnostr.org\"}}");
+        print!("{{\"{}\":\"wss://relay.gnostr.org\"}}", count);
         print!("]");
         //println!();
     }
