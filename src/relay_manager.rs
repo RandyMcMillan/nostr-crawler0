@@ -1,5 +1,5 @@
+use crate::processor::Processor;
 use crate::relays::Relays;
-use crate::Processor;
 use nostr_sdk::{
     prelude::{
         Client, Event, Filter, Keys, Kind, Options, RelayPoolNotification, Result, Tag, Timestamp,
