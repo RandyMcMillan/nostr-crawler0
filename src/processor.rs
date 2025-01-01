@@ -1,8 +1,6 @@
 use crate::pubkeys::PubKeys;
-use crate::relay_manager::RelayManager;
-use crate::relays::Relays;
 use crate::stats::Stats;
-use nostr_sdk::prelude::{Event, FromBech32, Keys, Kind, Result, SecretKey, Tag, Timestamp};
+use nostr_sdk::prelude::{Event, Kind, Tag, Timestamp};
 
 pub const BOOTSTRAP_RELAY1: &str = "wss://nos.lol";
 pub const BOOTSTRAP_RELAY2: &str = "wss://relay.damus.io";
