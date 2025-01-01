@@ -179,7 +179,7 @@ impl RelayManager {
                         event: _,
                     } => {}
                     _ => {
-                        //println!("other relay message {:?}, from {url}", relaymsg);
+                        println!("{{\"{:?}\":\"{url}\"}}", relaymsg);
                     }
                 },
                 RelayPoolNotification::Shutdown => break,
