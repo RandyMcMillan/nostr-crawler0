@@ -5,6 +5,7 @@ alias uc := update-cargo-dependencies
 #alias r := run
 alias t := cargo-test
 alias b := build
+alias br := build-release
 alias rr := run-release
 alias cw := cargo-watch
 
@@ -52,7 +53,10 @@ nix-lint:
 build:
     cargo build
 
-run-release:
+build-release:
+    cargo build --release
+
+run-release:build-release
     cargo run --release
 
 doc:
