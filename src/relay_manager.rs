@@ -144,7 +144,7 @@ impl RelayManager {
 
         let mut notifications = self.relay_client.notifications();
         while let Ok(notification) = notifications.recv().await {
-            // println!("relaynotif {:?}", notification);
+            //println!("relaynotif {:?}", notification);
             match notification {
                 RelayPoolNotification::Event(_url, event) => {
                     self.handle_event(&event);
@@ -179,7 +179,7 @@ impl RelayManager {
                         event: _,
                     } => {}
                     _ => {
-                        println!("{{\"{:?}\":\"{url}\"}}", relaymsg);
+                        //println!("{{\"{:?}\":\"{url}\"}}", relaymsg);
                     }
                 },
                 RelayPoolNotification::Shutdown => break,
@@ -204,6 +204,100 @@ impl RelayManager {
 
     fn handle_event(&mut self, event: &Event) {
         match event.kind {
+            Kind::Metadata => {
+                println!("{:?}", event.kind);
+            }
+            Kind::TextNote => {
+                println!("{:?}", event.kind);
+            }
+            Kind::EncryptedDirectMessage => {
+                println!("{:?}", event.kind);
+            }
+            Kind::EventDeletion => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Repost => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Reaction => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ChannelCreation => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ChannelMetadata => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ChannelMessage => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ChannelHideMessage => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ChannelMuteUser => {
+                println!("{:?}", event.kind);
+            }
+            Kind::PublicChatReserved45 => {
+                println!("{:?}", event.kind);
+            }
+            Kind::PublicChatReserved46 => {
+                println!("{:?}", event.kind);
+            }
+            Kind::PublicChatReserved47 => {
+                println!("{:?}", event.kind);
+            }
+            Kind::PublicChatReserved48 => {
+                println!("{:?}", event.kind);
+            }
+            Kind::PublicChatReserved49 => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Reporting => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ZapRequest => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Zap => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Authentication => {
+                println!("{:?}", event.kind);
+            }
+            Kind::NostrConnect => {
+                println!("{:?}", event.kind);
+            }
+            Kind::LongFormTextNote => {
+                println!("{:?}", event.kind);
+                self.update_event_time();
+                // count p tags
+                let mut cnt = 0;
+                for t in &event.tags {
+                    if let Tag::PubKey(_pk, s) = t {
+                        // state.pubkeys.add(pk);
+                        if let Some(ss) = s {
+                            //println!("    {ss}");
+                            let _ = self.relays.add(ss);
+                        }
+                        cnt += 1;
+                    }
+                }
+            }
+            Kind::RelayList => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Replaceable(u16) => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Ephemeral(u16) => {
+                println!("{:?}", event.kind);
+            }
+            Kind::ParameterizedReplaceable(u16) => {
+                println!("{:?}", event.kind);
+            }
+            Kind::Custom(u64) => {
+                println!("{:?}", event.kind);
+            }
             Kind::ContactList => {
                 self.update_event_time();
                 // count p tags
@@ -212,7 +306,7 @@ impl RelayManager {
                     if let Tag::PubKey(_pk, s) = t {
                         // state.pubkeys.add(pk);
                         if let Some(ss) = s {
-                            // println!("    {ss}");
+                            //println!("    {ss}");
                             let _ = self.relays.add(ss);
                         }
                         cnt += 1;
@@ -221,11 +315,11 @@ impl RelayManager {
             }
             Kind::RecommendRelay => {
                 self.update_event_time();
-                println!("224:Relay(s): {}", event.content);
+                println!("\n318:Relay(s): {}\n", event.content);
                 let _ = self.relays.add(&event.content);
             }
             _ => {
-                //println!("Unsupported event {:?}", event.kind)
+                println!("Unsupported event {:?}", event.kind)
             }
         }
     }
