@@ -3,10 +3,8 @@ use nostr_relays::processor::APP_SECRET_KEY;
 use nostr_relays::processor::BOOTSTRAP_RELAY1;
 use nostr_relays::processor::BOOTSTRAP_RELAY2;
 use nostr_relays::processor::BOOTSTRAP_RELAY3;
-use nostr_relays::pubkeys::PubKeys;
 use nostr_relays::relay_manager::RelayManager;
-use nostr_relays::stats::Stats;
-use nostr_sdk::prelude::{Event, FromBech32, Keys, Kind, Result, SecretKey, Tag, Timestamp};
+use nostr_sdk::prelude::{FromBech32, Keys, Result, SecretKey};
 
 #[tokio::main]
 async fn main() -> Result<()> {
