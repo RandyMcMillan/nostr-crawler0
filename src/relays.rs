@@ -50,9 +50,12 @@ impl Relays {
 
     pub fn dump(&self) {
         //println!("Relays: {}", self.r.len());
+        print!("[\"RELAYS\",");
         for u in &self.r {
-            print!("{} ", u.to_string());
+            print!("{{\"{}\"}},", u.to_string());
         }
+        print!("{{\"wss://relay.gnostr.org\"}}");
+        print!("]");
         //println!();
     }
 }
