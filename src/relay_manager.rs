@@ -67,17 +67,17 @@ impl RelayManager {
     pub async fn run(&mut self, bootstrap_relays: Vec<&str>) -> Result<()> {
         self.add_bootstrap_relays_if_needed(bootstrap_relays);
         self.add_some_relays().await?;
-        // let some_relays = self.relays.get_some(MAX_ACTIVE_RELAYS);
-        // for url in &some_relays {
-        //     self.relay_client.add_relay(url.to_string(), None).await?;
-        // }
+        let some_relays = self.relays.get_some(MAX_ACTIVE_RELAYS);
+        for url in &some_relays {
+            self.relay_client.add_relay(url.to_string(), None).await?;
+        }
         self.connect().await?;
 
         self.wait_and_handle_messages().await?;
 
-        println!("STOPPED");
-        println!("======================================================");
-        println!();
+        //println!("STOPPED");
+        //println!("======================================================");
+        //println!();
         self.relays.dump();
 
         Ok(())
@@ -85,20 +85,20 @@ impl RelayManager {
 
     async fn connect(&mut self) -> Result<()> {
         let relays = self.relay_client.relays().await;
-        println!("Connecting to {} relays ...", relays.len());
+        //println!("Connecting to {} relays ...", relays.len());
         for (u, _) in &relays {
-            print!("{:?} ", u.to_string())
+            //print!("{:?} ", u.to_string())
         }
-        println!();
+        //println!();
         // Warning: error is not handled here, should check back status
         self.relay_client.connect().await;
-        println!("Connected");
+        //println!("Connected");
         Ok(())
     }
 
     async fn disconnect(&mut self) -> Result<()> {
         let _ = self.relay_client.disconnect().await?;
-        println!("Disconnected");
+        //println!("Disconnected");
         Ok(())
     }
 
@@ -111,13 +111,13 @@ impl RelayManager {
                 .since(time_start)
                 .until(time_end)])
             .await;
-        println!("Subscribed to relay events",);
+        //println!("Subscribed to relay events",);
         Ok(())
     }
 
     async fn unsubscribe(&mut self) -> Result<()> {
         self.relay_client.unsubscribe().await;
-        println!("Unsubscribed from relay events ...");
+        //println!("Unsubscribed from relay events ...");
         Ok(())
     }
 
@@ -125,7 +125,7 @@ impl RelayManager {
         let connected_relays = self.relay_client.relays().await.len();
         let available_relays = self.relays.count();
         if connected_relays < MAX_ACTIVE_RELAYS && available_relays > connected_relays {
-            println!("Reconnect {} {}", connected_relays, available_relays);
+            //println!("Reconnect {} {}", connected_relays, available_relays);
             self.disconnect().await?;
             self.add_some_relays().await?;
             self.connect().await?;
@@ -166,11 +166,11 @@ impl RelayManager {
                                 _ => {}
                             }
                         }
-                        println!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
+                        //println!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
 
                         // Check for stop: All connected/connecting relays have signalled EOSE, or
                         if n1 >= (n_connected + n_connecting) && (n_connected + n_connecting > 0) {
-                            println!("STOPPING; All relays signalled EOSE ({n1})");
+                            //println!("STOPPING; All relays signalled EOSE ({n1})");
                             break;
                         }
                     }
@@ -179,7 +179,7 @@ impl RelayManager {
                         event: _,
                     } => {}
                     _ => {
-                        println!("other relay message {:?}, from {url}", relaymsg);
+                        //println!("other relay message {:?}, from {url}", relaymsg);
                     }
                 },
                 RelayPoolNotification::Shutdown => break,
@@ -188,10 +188,10 @@ impl RelayManager {
             let last_age = self.get_last_event_ago();
             let n1 = eose_relays.len();
             if last_age > 20 && n1 >= 2 {
-                println!(
-                    "STOPPING; There were some EOSE-s, and no events in the past {} secs",
-                    last_age
-                );
+                //println!(
+                //    "STOPPING; There were some EOSE-s, and no events in the past {} secs",
+                //    last_age
+                //);
                 break;
             }
 
@@ -221,11 +221,11 @@ impl RelayManager {
             }
             Kind::RecommendRelay => {
                 self.update_event_time();
-                println!("Relay(s): {}", event.content);
+                println!("224:Relay(s): {}", event.content);
                 let _ = self.relays.add(&event.content);
             }
             _ => {
-                println!("Unsupported event {:?}", event.kind)
+                //println!("Unsupported event {:?}", event.kind)
             }
         }
     }

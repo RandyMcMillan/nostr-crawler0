@@ -45,8 +45,8 @@ impl Processor {
                         cnt = cnt + 1;
                     }
                 }
-                println!("Contacts {} \t ", cnt); // event.pubkey.to_bech32().unwrap(),
-                                                  // self.print_summary();
+                //println!("Contacts {} \t ", cnt); // event.pubkey.to_bech32().unwrap(),
+                // self.print_summary();
             }
             Kind::RecommendRelay => {
                 self.stats.add_relays();
@@ -63,17 +63,17 @@ impl Processor {
     // }
 
     pub fn dump(&self) {
-        println!();
-        println!(
-            "Number of ContactList events:      \t {}",
-            self.stats.count_contacts
-        );
-        println!(
-            "Number of RecommendedRelay events: \t {}",
-            self.stats.count_relays
-        );
-        println!();
-        self.pubkeys.dump();
+        //println!();
+        //println!(
+        //    "Number of ContactList events:      \t {}",
+        //    self.stats.count_contacts
+        //);
+        //println!(
+        //    "Number of RecommendedRelay events: \t {}",
+        //    self.stats.count_relays
+        //);
+        //println!();
+        //self.pubkeys.dump();
     }
 }
 
