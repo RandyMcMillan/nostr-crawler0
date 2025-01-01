@@ -42,7 +42,7 @@ impl Processor {
                 for t in &event.tags {
                     if let Tag::PubKey(pk, _s) = t {
                         self.pubkeys.add(pk);
-                        cnt = cnt + 1;
+                        cnt += 1;
                     }
                 }
                 //println!("Contacts {} \t ", cnt); // event.pubkey.to_bech32().unwrap(),

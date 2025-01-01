@@ -53,7 +53,7 @@ impl Relays {
         //println!("Relays: {}", self.r.len());
         print!("[\"RELAYS\",");
         for u in &self.r {
-            print!("{{\"{}\":\"{}\"}},", count, u.to_string());
+            print!("{{\"{}\":\"{}\"}},", count, u);
             count += 1;
         }
         print!("{{\"{}\":\"wss://relay.gnostr.org\"}}", count);

@@ -13,14 +13,14 @@ impl PubKeys {
     }
 
     pub fn add(&mut self, p: &XOnlyPublicKey) -> u64 {
-        if !self.p.contains_key(&p) {
+        if !self.p.contains_key(p) {
             let n = self.p.len() as u64;
-            self.p.insert(p.clone(), n);
+            self.p.insert(*p, n);
             // print!("pks {n}  ");
         } else {
             // print!(".");
         }
-        self.p[&p]
+        self.p[p]
     }
 
     #[allow(dead_code)]
@@ -38,7 +38,7 @@ impl PubKeys {
 
     pub fn dump(&self) {
         println!("Found  {}  public keys:", self.p.len());
-        for (pk, _) in &self.p {
+        for pk in self.p.keys() {
             println!("  {}", pk.to_bech32().unwrap());
         }
         println!();

@@ -50,7 +50,7 @@ impl RelayManager {
         loop {
             let relays = self.relay_client.relays().await;
             let relay_urls: Vec<&Url> = relays.keys().collect();
-            if relay_urls.len() == 0 {
+            if relay_urls.is_empty() {
                 break;
             }
             self.relay_client
@@ -86,7 +86,7 @@ impl RelayManager {
     async fn connect(&mut self) -> Result<()> {
         let relays = self.relay_client.relays().await;
         //println!("Connecting to {} relays ...", relays.len());
-        for (u, _) in &relays {
+        for u in relays.keys() {
             //print!("{:?} ", u.to_string())
         }
         //println!();
@@ -97,7 +97,7 @@ impl RelayManager {
     }
 
     async fn disconnect(&mut self) -> Result<()> {
-        let _ = self.relay_client.disconnect().await?;
+        self.relay_client.disconnect().await?;
         //println!("Disconnected");
         Ok(())
     }
@@ -159,10 +159,10 @@ impl RelayManager {
                         let mut n_connected = 0;
                         let mut n_connecting = 0;
                         let relays = self.relay_client.relays().await;
-                        for (_url, relay) in &relays {
+                        for relay in relays.values() {
                             match relay.status().await {
-                                RelayStatus::Connected => n_connected = n_connected + 1,
-                                RelayStatus::Connecting => n_connecting = n_connecting + 1,
+                                RelayStatus::Connected => n_connected += 1,
+                                RelayStatus::Connecting => n_connecting += 1,
                                 _ => {}
                             }
                         }
@@ -215,7 +215,7 @@ impl RelayManager {
                             // println!("    {ss}");
                             let _ = self.relays.add(ss);
                         }
-                        cnt = cnt + 1;
+                        cnt += 1;
                     }
                 }
             }

@@ -15,11 +15,11 @@ impl Stats {
     }
 
     pub fn add_contacts(&mut self) {
-        self.count_contacts = self.count_contacts + 1;
+        self.count_contacts += 1;
     }
 
     pub fn add_relays(&mut self) {
-        self.count_relays = self.count_relays + 1;
+        self.count_relays += 1;
     }
 
     // pub fn print_summary(&self) {
