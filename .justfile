@@ -5,6 +5,7 @@ alias uc := update-cargo-dependencies
 #alias r := run
 alias t := cargo-test
 alias b := build
+alias i := install
 alias br := build-release
 alias rr := run-release
 alias cw := cargo-watch
@@ -55,6 +56,9 @@ build:
 
 build-release:
     cargo build --release
+
+install:
+    cargo install --path .
 
 run-release:build-release
     cargo run --release
