@@ -1,29 +1,26 @@
-pub mod processor;
-pub mod pubkeys;
-pub mod relay_manager;
-pub mod relays;
-pub mod stats;
+/*
+ * libgit2 "log" example - shows how to walk history and get commit info
+ *
+ * Written by the libgit2 contributors
+ *
+ * To the extent possible under law, the author(s) have dedicated all copyright
+ * and related and neighboring rights to this software to the public domain
+ * worldwide. This software is distributed without any warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication along
+ * with this software. If not, see
+ * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ */
+
+//#![deny(warnings)]
 
 use clap::Parser;
 use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
-//use time::Timespec;
-
-use ::time::at;
-use ::time::Timespec;
-use nostr_sdk::prelude::*;
-
-use crate::processor::Processor;
-use crate::processor::APP_SECRET_KEY;
-use crate::relay_manager::RelayManager;
-
-use crate::processor::BOOTSTRAP_RELAY1;
-use crate::processor::BOOTSTRAP_RELAY2;
-use crate::processor::BOOTSTRAP_RELAY3;
 
 #[derive(Parser)]
-pub struct CliArgs {
+struct Args {
     #[structopt(name = "topo-order", long)]
     /// sort commits in topological order
     flag_topo_order: bool,
@@ -69,7 +66,7 @@ pub struct CliArgs {
     #[structopt(name = "min-parents")]
     /// specify a minimum number of parents for a commit
     flag_min_parents: Option<usize>,
-    #[structopt(name = "patch", long, short)]
+    #[structopt(name = "patch", long, short, default_value = "true")]
     /// show commit diff
     flag_patch: bool,
     #[structopt(name = "commit")]
@@ -78,29 +75,10 @@ pub struct CliArgs {
     arg_spec: Vec<String>,
 }
 
-pub fn run(args: &CliArgs) -> Result<()> {
+fn run(args: &Args) -> Result<(), Error> {
     let path = args.flag_git_dir.as_ref().map(|s| &s[..]).unwrap_or(".");
     let repo = Repository::open(path)?;
     let mut revwalk = repo.revwalk()?;
-
-    async {
-        let opts = Options::new(); //.wait_for_send(true);
-        let mut app_keys = Keys::from_sk_str(&format!("{}", APP_SECRET_KEY)).unwrap();
-        let mut relay_client = Client::new_with_opts(&app_keys, opts);
-        let _ = relay_client
-            .publish_text_note("run:async:11<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("run:async:22<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("run:async:33<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("run:async:44<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client.publish_text_note("#gnostr", &[]).await;
-    };
 
     // Prepare the revwalk based on CLI parameters
     let base = if args.flag_reverse {
@@ -219,30 +197,39 @@ pub fn run(args: &CliArgs) -> Result<()> {
         } else {
             None
         };
+
+        // Sigil showing the origin of this DiffLine.
+        //
+        //   - Line context
+        // + - Line addition
+        // - - Line deletion
+        // = - Context (End of file)
+        // > - Add (End of file)
+        // < - Remove (End of file)
+        // F - File header
+        // H - Hunk header
+        // B - Line binary
         let b = commit.tree()?;
         let diff = repo.diff_tree_to_tree(a.as_ref(), Some(&b), Some(&mut diffopts2))?;
         diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
             match line.origin() {
-                ' ' | '+' | '-' => print!("{}", line.origin()),
-                _ => {}
+                ' ' | '+' | '-' => print!("216:{}\n", line.origin()),
+                '=' | '>' | '<' => print!("217:{}\n", line.origin()),
+                'F' | 'H' => print!("218:{}\n", line.origin()),
+                'B' => print!("219:{}\n", line.origin()),
+                _ => {
+                    print!("221:_={}\n", line.origin())
+                }
             }
-            print!("{}", str::from_utf8(line.content()).unwrap());
+            print!("212:{}\n", str::from_utf8(line.content()).unwrap());
             true
         })?;
     }
 
-    let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY);
-    let app_keys = Keys::new(app_secret_key.expect("REASON"));
-    let processor = Processor::new();
-    let mut relay_manager = RelayManager::new(app_keys, processor);
-    let _ = relay_manager.run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
-    //.await;
-    //relay_manager.processor.dump();
-
     Ok(())
 }
 
-pub fn sig_matches(sig: &Signature, arg: &Option<String>) -> bool {
+fn sig_matches(sig: &Signature, arg: &Option<String>) -> bool {
     match *arg {
         Some(ref s) => {
             sig.name().map(|n| n.contains(s)).unwrap_or(false)
@@ -252,44 +239,45 @@ pub fn sig_matches(sig: &Signature, arg: &Option<String>) -> bool {
     }
 }
 
-pub fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
+fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
     match (grep, msg) {
         (&None, _) => true,
         (&Some(_), None) => false,
-        (Some(s), Some(msg)) => msg.contains(s),
+        (&Some(ref s), Some(msg)) => msg.contains(s),
     }
 }
 
-pub fn print_commit(commit: &Commit) {
-    println!("commit {}", commit.id());
+fn print_commit(commit: &Commit) {
+    //println!("print_commit>>>==================>commit {:0>64}", commit.id());
+    println!("{:0>64}", commit.id());
 
     if commit.parents().len() > 1 {
         print!("Merge:");
         for id in commit.parent_ids() {
             print!(" {:.8}", id);
         }
-        println!();
+        //println!();
     }
 
     let author = commit.author();
-    println!("Author: {}", author);
-    print_time(&author.when(), "Date:   ");
-    println!();
+    //println!("Author: {}", author);
+    //print_time(&author.when(), "Date:   ");
+    //println!();
 
     for line in String::from_utf8_lossy(commit.message_bytes()).lines() {
-        println!("    {}", line);
+        //println!("    {}", line);
     }
-    println!();
+    //println!();
 }
 
-pub fn print_time(time: &Time, prefix: &str) {
+fn print_time(time: &Time, prefix: &str) {
     let (offset, sign) = match time.offset_minutes() {
         n if n < 0 => (-n, '-'),
         n => (n, '+'),
     };
     let (hours, minutes) = (offset / 60, offset % 60);
-    let ts = Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
-    let time = at(ts);
+    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
+    let time = time::at(ts);
 
     println!(
         "{}{} {}{:02}{:02}",
@@ -301,7 +289,7 @@ pub fn print_time(time: &Time, prefix: &str) {
     );
 }
 
-pub fn match_with_parent(
+fn match_with_parent(
     repo: &Repository,
     commit: &Commit,
     parent: &Commit,
@@ -313,7 +301,7 @@ pub fn match_with_parent(
     Ok(diff.deltas().len() > 0)
 }
 
-impl CliArgs {
+impl Args {
     fn min_parents(&self) -> usize {
         if self.flag_no_min_parents {
             return 0;
@@ -328,5 +316,13 @@ impl CliArgs {
         }
         self.flag_max_parents
             .or(if self.flag_no_merges { Some(1) } else { None })
+    }
+}
+
+fn main() {
+    let args = Args::parse();
+    match run(&args) {
+        Ok(()) => {}
+        Err(e) => println!("error: {}", e),
     }
 }

@@ -1,5 +1,8 @@
 use crate::processor::Processor;
 use crate::relays::Relays;
+use crate::CliArgs;
+use crate::APP_SECRET_KEY;
+use nostr_sdk::prelude::FromSkStr;
 use nostr_sdk::{
     prelude::{
         Client, Event, Filter, Keys, Kind, Options, RelayPoolNotification, Result, Tag, Timestamp,
@@ -10,6 +13,20 @@ use nostr_sdk::{
 use std::collections::HashSet;
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 use std::time::Duration;
+
+use clap::Parser;
+
+use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
+use git2::{DiffFormat, Error, Pathspec};
+use std::str;
+
+use crate::print_commit;
+
+use crate::sig_matches;
+
+use crate::log_message_matches;
+
+use crate::match_with_parent;
 
 const MAX_ACTIVE_RELAYS: usize = 50;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
@@ -60,10 +77,51 @@ impl RelayManager {
                 .await?;
         }
         let some_relays = self.relays.get_some(MAX_ACTIVE_RELAYS);
+
+        let args = CliArgs::parse();
+
+        let path = args.flag_git_dir.as_ref().map(|s| &s[..]).unwrap_or(".");
+        let repo = Repository::open(path)?;
+        let mut revwalk = repo.revwalk()?;
+        for commit in revwalk {
+            println!("{:?}", commit);
+        }
+
+        //async {
+        let opts = Options::new(); //.wait_for_send(true);
+        let mut app_keys = Keys::from_sk_str(&format!("{}", APP_SECRET_KEY)).unwrap();
+        let mut relay_client = Client::new_with_opts(&app_keys, opts);
+        let _ = relay_client.publish_text_note(path, &[]).await;
+        let _ = relay_client
+            .publish_text_note("relay_manager:1<--------------------------<<<<<", &[])
+            .await;
+        let _ = relay_client
+            .publish_text_note("2<--------------------------<<<<<", &[])
+            .await;
+        let _ = relay_client
+            .publish_text_note("3<--------------------------<<<<<", &[])
+            .await;
+        let _ = relay_client
+            .publish_text_note("4<--------------------------<<<<<", &[])
+            .await;
+        let _ = relay_client.publish_text_note("#gnostr", &[]).await;
+        //};
+
         for r in some_relays {
             //self.relay_client.add_relay(r, None).await?;
             self.relay_client.add_relay(r.clone(), None).await?;
-            //self.relay_client.publish_text_note("Hello world", &[]).await?;
+            self.relay_client
+                .publish_text_note("relay_manager:5<--------<<<<<<<<<", &[])
+                .await?;
+            self.relay_client
+                .publish_text_note("6<--------<<<<<<<<<", &[])
+                .await?;
+            self.relay_client
+                .publish_text_note("7<--------<<<<<<<<<", &[])
+                .await?;
+            self.relay_client
+                .publish_text_note("888888<--------<<<<<<<<<", &[])
+                .await?;
             self.relay_client
                 .publish_text_note(format!("{}", r), &[])
                 .await?;
