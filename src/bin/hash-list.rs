@@ -15,7 +15,7 @@
 //#![deny(warnings)]
 #![allow(clippy::manual_strip)]
 use clap::Parser;
-use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
+use git2::{Commit, DiffOptions, ObjectType, Repository, Signature/*, Time*/};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
 
@@ -259,35 +259,35 @@ fn print_commit(commit: &Commit) {
         //println!();
     }
 
-    let author = commit.author();
-    //println!("Author: {}", author);
-    //print_time(&author.when(), "Date:   ");
+    let _author = commit.author();
+    //println!("Author: {}", _author);
+    //print_time(&_author.when(), "Date:   ");
     //println!();
 
-    for line in String::from_utf8_lossy(commit.message_bytes()).lines() {
-        //println!("    {}", line);
+    for _line in String::from_utf8_lossy(commit.message_bytes()).lines() {
+        //println!("    {}", _line);
     }
     //println!();
 }
 
-fn print_time(time: &Time, prefix: &str) {
-    let (offset, sign) = match time.offset_minutes() {
-        n if n < 0 => (-n, '-'),
-        n => (n, '+'),
-    };
-    let (hours, minutes) = (offset / 60, offset % 60);
-    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
-    let time = time::at(ts);
-
-    println!(
-        "{}{} {}{:02}{:02}",
-        prefix,
-        time.strftime("%a %b %e %T %Y").unwrap(),
-        sign,
-        hours,
-        minutes
-    );
-}
+//fn print_time(time: &Time, prefix: &str) {
+//    let (offset, sign) = match time.offset_minutes() {
+//        n if n < 0 => (-n, '-'),
+//        n => (n, '+'),
+//    };
+//    let (hours, minutes) = (offset / 60, offset % 60);
+//    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
+//    let time = time::at(ts);
+//
+//    println!(
+//        "{}{} {}{:02}{:02}",
+//        prefix,
+//        time.strftime("%a %b %e %T %Y").unwrap(),
+//        sign,
+//        hours,
+//        minutes
+//    );
+//}
 
 fn match_with_parent(
     repo: &Repository,
