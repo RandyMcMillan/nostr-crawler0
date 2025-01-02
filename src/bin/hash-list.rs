@@ -211,19 +211,35 @@ fn run(args: &Args) -> Result<(), Error> {
         // B - Line binary
         let b = commit.tree()?;
         let diff = repo.diff_tree_to_tree(a.as_ref(), Some(&b), Some(&mut diffopts2))?;
-        diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
-            match line.origin() {
-                ' ' | '+' | '-' => println!("216:{}", line.origin()),
-                '=' | '>' | '<' => println!("217:{}", line.origin()),
-                'F' | 'H' => println!("218:{}", line.origin()),
-                'B' => println!("219:{}", line.origin()),
-                _ => {
-                    println!("221:_={}", line.origin())
+        if cfg!(debug_assertions) {
+            diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
+                match line.origin() {
+                    ' ' | '+' | '-' => println!("216:{}", line.origin()),
+                    '=' | '>' | '<' => println!("217:{}", line.origin()),
+                    'F' | 'H' => println!("218:{}", line.origin()),
+                    'B' => println!("219:{}", line.origin()),
+                    _ => {
+                        println!("221:_={}", line.origin())
+                    }
                 }
-            }
-            println!("212:{}", str::from_utf8(line.content()).unwrap());
-            true
-        })?;
+                println!("212:{}", str::from_utf8(line.content()).unwrap());
+                true
+            })?;
+        } else {
+            diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
+                match line.origin() {
+                    ' ' | '+' | '-' => print!("{}", line.origin()),
+                    '=' | '>' | '<' => print!("{}", line.origin()),
+                    'F' | 'H' => print!("{}", line.origin()),
+                    'B' => print!("{}", line.origin()),
+                    _ => {
+                        print!("{}", line.origin())
+                    }
+                }
+                print!("{}", str::from_utf8(line.content()).unwrap());
+                true
+            })?;
+        }
     }
 
     Ok(())
