@@ -15,7 +15,7 @@
 //#![deny(warnings)]
 #![allow(clippy::manual_strip)]
 use clap::Parser;
-use git2::{Commit, DiffOptions, ObjectType, Repository, Signature/*, Time*/};
+use git2::{Commit, DiffOptions, ObjectType, Repository, Signature /*, Time*/};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
 

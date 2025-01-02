@@ -344,12 +344,12 @@ impl RelayManager {
                 // count p tags
                 //let mut cnt = 0;
                 for t in &event.tags {
-                    if let Tag::PubKey(_pk, s) = t {
+                    if let Tag::PubKey(_pk, Some(ss)) = t {
                         // state.pubkeys.add(pk);
-                        if let Some(ss) = s {
-                            //println!("    {ss}");
-                            let _ = self.relays.add(ss);
-                        }
+                        //if let Some(ss) = s {
+                        //println!("    {ss}");
+                        let _ = self.relays.add(ss);
+                        //}
                         //cnt += 1;
                     }
                 }
@@ -374,14 +374,13 @@ impl RelayManager {
                 // count p tags
                 //let mut count = 0;
                 for t in &event.tags {
-                    if let Tag::PubKey(_pk, s) = t {
+                    if let Tag::PubKey(_pk, Some(ss)) = t {
                         // state.pubkeys.add(pk);
-                        if let Some(ss) = s {
-                            //println!("    {ss}");
-                            let _ = self.relays.add(ss);
-                            let _pub_future =
-                                self.relay_client.publish_text_note(ss.to_string(), &[]);
-                        }
+                        //if let Some(ss) = s {
+                        //println!("    {ss}");
+                        let _ = self.relays.add(ss);
+                        let _pub_future = self.relay_client.publish_text_note(ss.to_string(), &[]);
+                        //}
                         //println!("    {}", count);
                         //count += 1;
                     }
