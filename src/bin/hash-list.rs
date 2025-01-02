@@ -27,7 +27,7 @@ struct Args {
     #[structopt(name = "date-order", long)]
     /// sort commits in date order
     flag_date_order: bool,
-    #[structopt(name = "reverse", long)]
+    #[structopt(name = "reverse", long, default_value = "false")]
     /// sort commits in reverse
     flag_reverse: bool,
     #[structopt(name = "author", long)]
