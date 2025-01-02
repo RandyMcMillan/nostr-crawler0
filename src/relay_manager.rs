@@ -9,6 +9,7 @@ use nostr_sdk::{
 };
 use std::collections::HashSet;
 use std::time::Duration;
+use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
 const MAX_ACTIVE_RELAYS: usize = 50;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
@@ -27,6 +28,7 @@ impl RelayManager {
     pub fn new(app_keys: Keys, processor: Processor) -> Self {
         let opts = Options::new(); //.wait_for_send(true);
         let relay_client = Client::new_with_opts(&app_keys, opts);
+        let proxy = Some(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9050)));
         Self {
             // app_keys,
             relays: Relays::new(),
@@ -59,7 +61,10 @@ impl RelayManager {
         }
         let some_relays = self.relays.get_some(MAX_ACTIVE_RELAYS);
         for r in some_relays {
-            self.relay_client.add_relay(r, None).await?;
+            //self.relay_client.add_relay(r, None).await?;
+            self.relay_client.add_relay(r.clone(), None).await?;
+            //self.relay_client.publish_text_note("Hello world", &[]).await?;
+            self.relay_client.publish_text_note(format!("{}",r), &[]).await?;
         }
         Ok(())
     }
@@ -112,6 +117,8 @@ impl RelayManager {
                 .until(time_end)])
             .await;
         //println!("Subscribed to relay events",);
+        self.relay_client.publish_text_note(format!("{}",time_start), &[]).await?;
+        self.relay_client.publish_text_note(format!("{}",time_end), &[]).await?;
         Ok(())
     }
 
@@ -125,10 +132,12 @@ impl RelayManager {
         let connected_relays = self.relay_client.relays().await.len();
         let available_relays = self.relays.count();
         if connected_relays < MAX_ACTIVE_RELAYS && available_relays > connected_relays {
-            //println!("Reconnect {} {}", connected_relays, available_relays);
+            println!("connected_relays={} available_relays={}", connected_relays, available_relays);
             self.disconnect().await?;
             self.add_some_relays().await?;
             self.connect().await?;
+            self.relay_client.publish_text_note(format!("{}", connected_relays), &[]).await?;
+            self.relay_client.publish_text_note(format!("{}", available_relays), &[]).await?;
         }
         Ok(())
     }
@@ -166,7 +175,7 @@ impl RelayManager {
                                 _ => {}
                             }
                         }
-                        //println!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
+//println!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
 
                         // Check for stop: All connected/connecting relays have signalled EOSE, or
                         if n1 >= (n_connected + n_connecting) && (n_connected + n_connecting > 0) {
@@ -308,6 +317,7 @@ impl RelayManager {
                         if let Some(ss) = s {
                             //println!("    {ss}");
                             let _ = self.relays.add(ss);
+                            self.relay_client.publish_text_note(format!("{}", ss), &[]);
                         }
                         //println!("    {}", count);
                         //count += 1;

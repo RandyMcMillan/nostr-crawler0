@@ -8,6 +8,7 @@ use nostr_sdk::prelude::{FromBech32, Keys, Result, SecretKey};
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    env_logger::init();
     let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY)?;
     let app_keys = Keys::new(app_secret_key);
     let processor = Processor::new();

@@ -5,8 +5,8 @@ use nostr_sdk::prelude::{Event, Kind, Tag, Timestamp};
 pub const BOOTSTRAP_RELAY1: &str = "wss://nos.lol";
 pub const BOOTSTRAP_RELAY2: &str = "wss://relay.damus.io";
 pub const BOOTSTRAP_RELAY3: &str = "wss://relay.plebstr.com";
-pub const APP_SECRET_KEY: &str = "nsec1ufnus6pju578ste3v90xd5m2decpuzpql2295m3sknqcjzyys9ls0qlc85";
-
+//pub const APP_SECRET_KEY: &str = "nsec1ufnus6pju578ste3v90xd5m2decpuzpql2295m3sknqcjzyys9ls0qlc85";
+pub const APP_SECRET_KEY: &str = "nsec1uwcvgs5clswpfxhm7nyfjmaeysn6us0yvjdexn9yjkv3k7zjhp2sv7rt36";
 pub struct Processor {
     pubkeys: PubKeys,
     stats: Stats,
