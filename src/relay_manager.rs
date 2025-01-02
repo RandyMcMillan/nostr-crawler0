@@ -19,10 +19,6 @@ use clap::Parser;
 use git2::Repository;
 use std::str;
 
-
-
-
-
 const MAX_ACTIVE_RELAYS: usize = 50;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
 

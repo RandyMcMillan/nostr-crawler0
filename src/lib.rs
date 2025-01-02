@@ -21,6 +21,7 @@ use crate::processor::BOOTSTRAP_RELAY1;
 use crate::processor::BOOTSTRAP_RELAY2;
 use crate::processor::BOOTSTRAP_RELAY3;
 
+#[allow(clippy::manual_strip)]
 #[derive(Parser)]
 pub struct CliArgs {
     #[structopt(name = "topo-order", long)]
@@ -82,7 +83,7 @@ pub fn run(args: &CliArgs) -> Result<()> {
     let repo = Repository::open(path)?;
     let mut revwalk = repo.revwalk()?;
 
-    async {
+    let _run_async = async {
         let opts = Options::new(); //.wait_for_send(true);
         let app_keys = Keys::from_sk_str(APP_SECRET_KEY).unwrap();
         let relay_client = Client::new_with_opts(&app_keys, opts);
@@ -117,6 +118,7 @@ pub fn run(args: &CliArgs) -> Result<()> {
         },
     )?;
     for commit in &args.arg_commit {
+        #[allow(clippy::manual_strip)]
         if commit.starts_with('^') {
             let obj = repo.revparse_single(&commit[1..])?;
             revwalk.hide(obj.id())?;
@@ -234,7 +236,7 @@ pub fn run(args: &CliArgs) -> Result<()> {
     let app_keys = Keys::new(app_secret_key.expect("REASON"));
     let processor = Processor::new();
     let mut relay_manager = RelayManager::new(app_keys, processor);
-    let _ = relay_manager.run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
+    let _run_async = relay_manager.run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
     //.await;
     //relay_manager.processor.dump();
 
