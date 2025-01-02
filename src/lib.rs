@@ -8,8 +8,19 @@ use clap::Parser;
 use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
+//use time::Timespec;
 
-use nostr_sdk::prelude::Result;
+use ::time::Timespec;
+use ::time::at;
+use nostr_sdk::prelude::*;
+
+use crate::relay_manager::RelayManager;
+use crate::processor::Processor;
+use crate::processor::APP_SECRET_KEY;
+
+use crate::processor::BOOTSTRAP_RELAY1;
+use crate::processor::BOOTSTRAP_RELAY2;
+use crate::processor::BOOTSTRAP_RELAY3;
 
 #[derive(Parser)]
 pub struct CliArgs {
@@ -201,6 +212,18 @@ pub fn run(args: &CliArgs) -> Result<(), Error> {
         })?;
     }
 
+
+    let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY);
+    let app_keys = Keys::new(app_secret_key.expect("REASON"));
+    let processor = Processor::new();
+    let mut relay_manager = RelayManager::new(app_keys, processor);
+    let _ = relay_manager
+        .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
+        //.await;
+    //relay_manager.processor.dump();
+
+
+
     Ok(())
 }
 
@@ -250,8 +273,8 @@ pub fn print_time(time: &Time, prefix: &str) {
         n => (n, '+'),
     };
     let (hours, minutes) = (offset / 60, offset % 60);
-    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
-    let time = time::at(ts);
+    let ts = Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
+    let time = at(ts);
 
     println!(
         "{}{} {}{:02}{:02}",

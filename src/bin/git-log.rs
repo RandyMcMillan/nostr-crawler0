@@ -4,7 +4,8 @@ use nostr_relays::processor::BOOTSTRAP_RELAY1;
 use nostr_relays::processor::BOOTSTRAP_RELAY2;
 use nostr_relays::processor::BOOTSTRAP_RELAY3;
 use nostr_relays::relay_manager::RelayManager;
-use nostr_relays::*;
+use nostr_relays::CliArgs;
+
 use nostr_sdk::prelude::{FromBech32, Keys, SecretKey};
 
 use clap::Parser;
@@ -17,14 +18,14 @@ async fn main() {
     env_logger::init();
     let args = CliArgs::parse();
 
-    let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY);
-    let app_keys = Keys::new(app_secret_key.expect("REASON"));
-    let processor = Processor::new();
-    let mut relay_manager = RelayManager::new(app_keys, processor);
-    let _ = relay_manager
-        .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3])
-        .await;
-    //relay_manager.processor.dump();
+    //let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY);
+    //let app_keys = Keys::new(app_secret_key.expect("REASON"));
+    //let processor = Processor::new();
+    //let mut relay_manager = RelayManager::new(app_keys, processor);
+    //let _ = relay_manager
+    //    .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3])
+    //    .await;
+    ////relay_manager.processor.dump();
 
     match nostr_relays::run(&args) {
         Ok(()) => {}
