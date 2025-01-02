@@ -330,7 +330,7 @@ impl RelayManager {
                         if let Some(ss) = s {
                             //println!("    {ss}");
                             let _ = self.relays.add(ss);
-                            self.relay_client.publish_text_note(ss.to_string(), &[]);
+                            let _ = self.relay_client.publish_text_note(ss.to_string(), &[]);
                         }
                         //println!("    {}", count);
                         //count += 1;
