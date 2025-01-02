@@ -115,7 +115,6 @@ impl Processor {
             //Kind::Custom(u64) => {
             //    println!("{:?}", event.kind);
             //}
-
             Kind::ContactList => {
                 self.stats.add_contacts();
                 // count p tags
