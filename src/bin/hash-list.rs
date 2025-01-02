@@ -202,7 +202,8 @@ fn run(args: &Args) -> Result<(), Error> {
             print_padded_hashlist(&commit);
             continue;
         }
-        print_commit(&commit);
+
+        print_commit(&commit); // header and message
         if !args.flag_patch || commit.parents().len() > 1 {
             continue;
         }
