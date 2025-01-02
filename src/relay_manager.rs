@@ -286,15 +286,15 @@ impl RelayManager {
             Kind::RelayList => {
                 println!("{:?}", event.kind);
             }
-            Kind::Replaceable(u16) => {
-                println!("{:?}", event.kind);
-            }
-            Kind::Ephemeral(u16) => {
-                println!("{:?}", event.kind);
-            }
-            Kind::ParameterizedReplaceable(u16) => {
-                println!("{:?}", event.kind);
-            }
+            //Kind::Replaceable(u16) => {
+            //    println!("{:?}", event.kind);
+            //}
+            //Kind::Ephemeral(u16) => {
+            //    println!("{:?}", event.kind);
+            //}
+            //Kind::ParameterizedReplaceable(u16) => {
+            //    println!("{:?}", event.kind);
+            //}
             //Kind::Custom(u64) => {
             //  println!("{:?}", event.kind);
             //}
