@@ -122,11 +122,12 @@ impl Processor {
                 }
                 //println!("Contacts {} \t ", cnt); // event.pubkey.to_bech32().unwrap(),
                 // self.print_summary();
-                println!("{:?}", event);
+
+                //println!("{:?}", event);
             }
             Kind::RecommendRelay => {
                 self.stats.add_relays();
-                println!("{:?}", event);
+                //println!("{:?}", event);
             }
             _ => {
                 println!("{:?}", event.kind)

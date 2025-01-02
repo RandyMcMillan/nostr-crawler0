@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
     relay_manager
         .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3])
         .await?;
-    relay_manager.processor.dump();
+    //relay_manager.processor.dump();
 
     Ok(())
 }

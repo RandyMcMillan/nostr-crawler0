@@ -84,11 +84,11 @@ impl RelayManager {
     }
 
     async fn connect(&mut self) -> Result<()> {
-        let relays = self.relay_client.relays().await;
+        //let relays = self.relay_client.relays().await;
         //println!("Connecting to {} relays ...", relays.len());
-        for u in relays.keys() {
-            //print!("{:?} ", u.to_string())
-        }
+        //for u in relays.keys() {
+        //print!("{:?} ", u.to_string())
+        //}
         //println!();
         // Warning: error is not handled here, should check back status
         self.relay_client.connect().await;
@@ -155,7 +155,7 @@ impl RelayManager {
                     RelayMessage::EndOfStoredEvents(_sub_id) => {
                         eose_relays.insert(url.clone());
                         let n1 = eose_relays.len();
-                        let n2 = self.relay_client.relays().await.len();
+                        //let n2 = self.relay_client.relays().await.len();
                         let mut n_connected = 0;
                         let mut n_connecting = 0;
                         let relays = self.relay_client.relays().await;
@@ -271,7 +271,7 @@ impl RelayManager {
                 println!("{:?}", event.kind);
                 self.update_event_time();
                 // count p tags
-                let mut cnt = 0;
+                //let mut cnt = 0;
                 for t in &event.tags {
                     if let Tag::PubKey(_pk, s) = t {
                         // state.pubkeys.add(pk);
@@ -279,7 +279,7 @@ impl RelayManager {
                             //println!("    {ss}");
                             let _ = self.relays.add(ss);
                         }
-                        cnt += 1;
+                        //cnt += 1;
                     }
                 }
             }
@@ -295,13 +295,13 @@ impl RelayManager {
             Kind::ParameterizedReplaceable(u16) => {
                 println!("{:?}", event.kind);
             }
-            Kind::Custom(u64) => {
-                println!("{:?}", event.kind);
-            }
+            //Kind::Custom(u64) => {
+            //  println!("{:?}", event.kind);
+            //}
             Kind::ContactList => {
                 self.update_event_time();
                 // count p tags
-                let mut cnt = 0;
+                //let mut count = 0;
                 for t in &event.tags {
                     if let Tag::PubKey(_pk, s) = t {
                         // state.pubkeys.add(pk);
@@ -309,7 +309,8 @@ impl RelayManager {
                             //println!("    {ss}");
                             let _ = self.relays.add(ss);
                         }
-                        cnt += 1;
+                        //println!("    {}", count);
+                        //count += 1;
                     }
                 }
             }

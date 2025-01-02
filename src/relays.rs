@@ -42,9 +42,9 @@ impl Relays {
     pub fn print(&self) {
         //println!("43:Relays: {}", self.r.len());
         //print!("    ");
-        for u in &self.r {
-            //print!("{} ", u.to_string());
-        }
+        //for u in &self.r {
+        //print!("{} ", u.to_string());
+        //}
         //println!();
     }
 
