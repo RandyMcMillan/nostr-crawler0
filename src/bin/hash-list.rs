@@ -213,15 +213,15 @@ fn run(args: &Args) -> Result<(), Error> {
         let diff = repo.diff_tree_to_tree(a.as_ref(), Some(&b), Some(&mut diffopts2))?;
         diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
             match line.origin() {
-                ' ' | '+' | '-' => print!("216:{}\n", line.origin()),
-                '=' | '>' | '<' => print!("217:{}\n", line.origin()),
-                'F' | 'H' => print!("218:{}\n", line.origin()),
-                'B' => print!("219:{}\n", line.origin()),
+                ' ' | '+' | '-' => println!("216:{}", line.origin()),
+                '=' | '>' | '<' => println!("217:{}", line.origin()),
+                'F' | 'H' => println!("218:{}", line.origin()),
+                'B' => println!("219:{}", line.origin()),
                 _ => {
-                    print!("221:_={}\n", line.origin())
+                    println!("221:_={}", line.origin())
                 }
             }
-            print!("212:{}\n", str::from_utf8(line.content()).unwrap());
+            println!("212:{}", str::from_utf8(line.content()).unwrap());
             true
         })?;
     }
@@ -243,7 +243,7 @@ fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
     match (grep, msg) {
         (&None, _) => true,
         (&Some(_), None) => false,
-        (&Some(ref s), Some(msg)) => msg.contains(s),
+        (Some(s), Some(msg)) => msg.contains(s),
     }
 }
 
