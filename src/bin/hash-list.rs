@@ -239,7 +239,7 @@ fn run(args: &Args) -> Result<(), Error> {
                         println!("221:_={}", line.origin())
                     }
                 }
-                println!("212:{}", str::from_utf8(line.content()).unwrap());
+                print!("212:{}", str::from_utf8(line.content()).unwrap());
                 true
             })?;
         } else {
@@ -257,6 +257,7 @@ fn run(args: &Args) -> Result<(), Error> {
                 true
             })?;
         }
+        println!("");
     }
 
     Ok(())
