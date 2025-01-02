@@ -15,7 +15,7 @@
 //#![deny(warnings)]
 #![allow(clippy::manual_strip)]
 use clap::Parser;
-use git2::{Commit, DiffOptions, ObjectType, Repository, Signature /*, Time*/};
+use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
 
@@ -66,9 +66,15 @@ struct Args {
     #[structopt(name = "min-parents")]
     /// specify a minimum number of parents for a commit
     flag_min_parents: Option<usize>,
-    #[structopt(name = "patch", long, short, default_value = "true")]
+    #[structopt(name = "patch", long, short, default_value = "false")]
     /// show commit diff
     flag_patch: bool,
+    #[structopt(name = "hashlist", long, default_value = "false")]
+    /// show hashlist
+    flag_hashlist: bool,
+    #[structopt(name = "padded_hashlist", long, default_value = "true")]
+    /// show padded_hashlist
+    flag_padded_hashlist: bool,
     #[structopt(name = "commit")]
     arg_commit: Vec<String>,
     #[structopt(name = "spec", last = true)]
@@ -188,6 +194,14 @@ fn run(args: &Args) -> Result<(), Error> {
     for commit in revwalk {
         let commit = commit?;
         //print_commit(&commit);
+        if args.flag_hashlist {
+            print_hashlist(&commit);
+            continue;
+        }
+        if args.flag_padded_hashlist {
+            print_padded_hashlist(&commit);
+            continue;
+        }
         if !args.flag_patch || commit.parents().len() > 1 {
             continue;
         }
@@ -198,20 +212,21 @@ fn run(args: &Args) -> Result<(), Error> {
             None
         };
 
-        // Sigil showing the origin of this DiffLine.
-        //
-        //   - Line context
-        // + - Line addition
-        // - - Line deletion
-        // = - Context (End of file)
-        // > - Add (End of file)
-        // < - Remove (End of file)
-        // F - File header
-        // H - Hunk header
-        // B - Line binary
         let b = commit.tree()?;
         let diff = repo.diff_tree_to_tree(a.as_ref(), Some(&b), Some(&mut diffopts2))?;
         if cfg!(debug_assertions) {
+            // Sigil showing the origin of this DiffLine.
+            //
+            //   - Line context
+            // + - Line addition
+            // - - Line deletion
+            // = - Context (End of file)
+            // > - Add (End of file)
+            // < - Remove (End of file)
+            // F - File header
+            // H - Hunk header
+            // B - Line binary
+
             diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
                 match line.origin() {
                     ' ' | '+' | '-' => println!("216:{}", line.origin()),
@@ -264,52 +279,71 @@ fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
 }
 
 fn padded_commit_id(commit: &Commit) -> String {
-
     format!("{:0>64}", commit.id())
-
 }
 
-fn print_commit(commit: &Commit) {
-    //println!("print_commit>>>==================>commit {:0>64}", commit.id());
-    println!("{:0>64}", commit.id());
+fn print_hashlist(commit: &Commit) {
+    println!("{}", commit.id());
 
     if commit.parents().len() > 1 {
         print!("Merge:");
         for id in commit.parent_ids() {
             print!(" {:.8}", id);
         }
-        //println!();
+        println!();
+    }
+}
+fn print_padded_hashlist(commit: &Commit) {
+    println!("{:0>64}", commit.id());
+
+    if commit.parents().len() > 1 {
+        print!("Merge:");
+        for id in commit.parent_ids() {
+            print!(" {:0>64}", id);
+        }
+        println!();
+    }
+}
+fn print_commit(commit: &Commit) {
+    println!("{}", commit.id());
+
+    if commit.parents().len() > 1 {
+        print!("Merge:");
+        for id in commit.parent_ids() {
+            print!(" {:.8}", id);
+        }
+        println!();
     }
 
-    let _author = commit.author();
-    //println!("Author: {}", _author);
-    //print_time(&_author.when(), "Date:   ");
-    //println!();
+    let author = commit.author();
+    println!("Author: {}", author);
+    print_time(&author.when(), "Date:   ");
+    println!();
 
-    for _line in String::from_utf8_lossy(commit.message_bytes()).lines() {
-        //println!("    {}", _line);
+    for line in String::from_utf8_lossy(commit.message_bytes()).lines() {
+        println!("    {}", line);
     }
-    //println!();
+    println!();
 }
 
-//fn print_time(time: &Time, prefix: &str) {
-//    let (offset, sign) = match time.offset_minutes() {
-//        n if n < 0 => (-n, '-'),
-//        n => (n, '+'),
-//    };
-//    let (hours, minutes) = (offset / 60, offset % 60);
-//    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
-//    let time = time::at(ts);
-//
-//    println!(
-//        "{}{} {}{:02}{:02}",
-//        prefix,
-//        time.strftime("%a %b %e %T %Y").unwrap(),
-//        sign,
-//        hours,
-//        minutes
-//    );
-//}
+fn print_time(time: &Time, prefix: &str) {
+    let (offset, sign) = match time.offset_minutes() {
+        n if n < 0 => (-n, '-'),
+        n => (n, '+'),
+    };
+    let (hours, minutes) = (offset / 60, offset % 60);
+    let ts = time::Timespec::new(time.seconds() + (time.offset_minutes() as i64) * 60, 0);
+    let time = time::at(ts);
+
+    println!(
+        "{}{} {}{:02}{:02}",
+        prefix,
+        time.strftime("%a %b %e %T %Y").unwrap(),
+        sign,
+        hours,
+        minutes
+    );
+}
 
 fn match_with_parent(
     repo: &Repository,
