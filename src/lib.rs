@@ -9,7 +9,7 @@ use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
 
-use nostr_sdk::prelude::{FromBech32, Keys, Result, SecretKey};
+use nostr_sdk::prelude::Result;
 
 #[derive(Parser)]
 pub struct CliArgs {
@@ -218,7 +218,7 @@ pub fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
     match (grep, msg) {
         (&None, _) => true,
         (&Some(_), None) => false,
-        (&Some(ref s), Some(msg)) => msg.contains(s),
+        (Some(s), Some(msg)) => msg.contains(s),
     }
 }
 

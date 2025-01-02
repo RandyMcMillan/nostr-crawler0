@@ -5,7 +5,7 @@ use nostr_relays::processor::BOOTSTRAP_RELAY2;
 use nostr_relays::processor::BOOTSTRAP_RELAY3;
 use nostr_relays::relay_manager::RelayManager;
 use nostr_relays::*;
-use nostr_sdk::prelude::{FromBech32, Keys, Result, SecretKey};
+use nostr_sdk::prelude::{FromBech32, Keys, SecretKey};
 
 use clap::Parser;
 //use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
