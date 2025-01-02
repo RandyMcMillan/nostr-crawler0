@@ -187,7 +187,7 @@ fn run(args: &Args) -> Result<(), Error> {
     // print!
     for commit in revwalk {
         let commit = commit?;
-        print_commit(&commit);
+        //print_commit(&commit);
         if !args.flag_patch || commit.parents().len() > 1 {
             continue;
         }
@@ -233,7 +233,7 @@ fn run(args: &Args) -> Result<(), Error> {
                     //'F' | 'H' => print!("{}", line.origin()),
                     //'B' => print!("{}", line.origin()),
                     _ => {
-                        print!("{}", line.origin())
+                        //print!("{}", line.origin())
                     }
                 }
                 print!("{}", str::from_utf8(line.content()).unwrap());
@@ -261,6 +261,12 @@ fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
         (&Some(_), None) => false,
         (Some(s), Some(msg)) => msg.contains(s),
     }
+}
+
+fn padded_commit_id(commit: &Commit) -> String {
+
+    format!("{:0>64}", commit.id())
+
 }
 
 fn print_commit(commit: &Commit) {
