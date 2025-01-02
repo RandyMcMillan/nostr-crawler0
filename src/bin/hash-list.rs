@@ -229,9 +229,9 @@ fn run(args: &Args) -> Result<(), Error> {
             diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
                 match line.origin() {
                     ' ' | '+' | '-' => print!("{}", line.origin()),
-                    '=' | '>' | '<' => print!("{}", line.origin()),
-                    'F' | 'H' => print!("{}", line.origin()),
-                    'B' => print!("{}", line.origin()),
+                    //'=' | '>' | '<' => print!("{}", line.origin()),
+                    //'F' | 'H' => print!("{}", line.origin()),
+                    //'B' => print!("{}", line.origin()),
                     _ => {
                         print!("{}", line.origin())
                     }
