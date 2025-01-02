@@ -16,17 +16,12 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
-use git2::{DiffFormat, Error, Pathspec};
+use git2::Repository;
 use std::str;
 
-use crate::print_commit;
 
-use crate::sig_matches;
 
-use crate::log_message_matches;
 
-use crate::match_with_parent;
 
 const MAX_ACTIVE_RELAYS: usize = 50;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
@@ -82,15 +77,15 @@ impl RelayManager {
 
         let path = args.flag_git_dir.as_ref().map(|s| &s[..]).unwrap_or(".");
         let repo = Repository::open(path)?;
-        let mut revwalk = repo.revwalk()?;
+        let revwalk = repo.revwalk()?;
         for commit in revwalk {
             println!("{:?}", commit);
         }
 
         //async {
         let opts = Options::new(); //.wait_for_send(true);
-        let mut app_keys = Keys::from_sk_str(&format!("{}", APP_SECRET_KEY)).unwrap();
-        let mut relay_client = Client::new_with_opts(&app_keys, opts);
+        let app_keys = Keys::from_sk_str(&APP_SECRET_KEY.to_string()).unwrap();
+        let relay_client = Client::new_with_opts(&app_keys, opts);
         let _ = relay_client.publish_text_note(path, &[]).await;
         let _ = relay_client
             .publish_text_note("relay_manager:1<--------------------------<<<<<", &[])

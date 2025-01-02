@@ -85,8 +85,8 @@ pub fn run(args: &CliArgs) -> Result<()> {
 
     async {
         let opts = Options::new(); //.wait_for_send(true);
-        let mut app_keys = Keys::from_sk_str(&format!("{}", APP_SECRET_KEY)).unwrap();
-        let mut relay_client = Client::new_with_opts(&app_keys, opts);
+        let app_keys = Keys::from_sk_str(APP_SECRET_KEY.to_string()).unwrap();
+        let relay_client = Client::new_with_opts(&app_keys, opts);
         let _ = relay_client
             .publish_text_note("run:async:11<--------------------------<<<<<", &[])
             .await;
