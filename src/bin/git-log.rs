@@ -311,6 +311,7 @@ impl Args {
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
     let args = Args::parse();
     match run(&args) {
         Ok(()) => {}
