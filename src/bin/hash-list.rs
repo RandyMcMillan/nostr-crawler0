@@ -69,10 +69,10 @@ struct Args {
     #[structopt(name = "patch", long, short, default_value = "false")]
     /// show commit diff
     flag_patch: bool,
-    #[structopt(name = "hashlist", long, default_value = "false")]
+    #[structopt(name = "hashlist", long = "hl", default_value = "false")]
     /// show hashlist
     flag_hashlist: bool,
-    #[structopt(name = "padded_hashlist", long, default_value = "true")]
+    #[structopt(name = "padded_hashlist", long = "phl", default_value = "false")]
     /// show padded_hashlist
     flag_padded_hashlist: bool,
     #[structopt(name = "commit")]
@@ -193,7 +193,7 @@ fn run(args: &Args) -> Result<(), Error> {
     // print!
     for commit in revwalk {
         let commit = commit?;
-        //print_commit(&commit);
+
         if args.flag_hashlist {
             print_hashlist(&commit);
             continue;
@@ -202,6 +202,7 @@ fn run(args: &Args) -> Result<(), Error> {
             print_padded_hashlist(&commit);
             continue;
         }
+        print_commit(&commit);
         if !args.flag_patch || commit.parents().len() > 1 {
             continue;
         }
