@@ -10,7 +10,7 @@ use nostr_sdk::prelude::{FromBech32, Keys, Result, SecretKey};
 async fn main() -> Result<()> {
     let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY)?;
     let app_keys = Keys::new(app_secret_key);
-    let processor = Processor::default();
+    let processor = Processor::new();
     let mut relay_manager = RelayManager::new(app_keys, processor);
     relay_manager
         .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3])

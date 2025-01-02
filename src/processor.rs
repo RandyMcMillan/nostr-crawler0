@@ -13,10 +13,10 @@ pub struct Processor {
 }
 
 impl Processor {
-    pub fn default() -> Self {
+    pub fn new() -> Self {
         Self {
-            pubkeys: PubKeys::default(),
-            stats: Stats::default(),
+            pubkeys: PubKeys::new(),
+            stats: Stats::new(),
         }
     }
 

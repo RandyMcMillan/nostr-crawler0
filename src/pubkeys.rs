@@ -6,7 +6,7 @@ pub struct PubKeys {
 }
 
 impl PubKeys {
-    pub fn default() -> Self {
+    pub fn new() -> Self {
         Self {
             p: HashMap::default(),
         }

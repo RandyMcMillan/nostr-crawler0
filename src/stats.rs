@@ -7,7 +7,7 @@ pub struct Stats {
 }
 
 impl Stats {
-    pub fn default() -> Self {
+    pub fn new() -> Self {
         Stats {
             count_contacts: 0,
             count_relays: 0,
