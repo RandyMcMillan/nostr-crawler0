@@ -28,7 +28,7 @@ impl RelayManager {
     pub fn new(app_keys: Keys, processor: Processor) -> Self {
         let opts = Options::new(); //.wait_for_send(true);
         let relay_client = Client::new_with_opts(&app_keys, opts);
-        let proxy = Some(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9050)));
+        let _proxy = Some(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9050)));
         Self {
             // app_keys,
             relays: Relays::new(),
