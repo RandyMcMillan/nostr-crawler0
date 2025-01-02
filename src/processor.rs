@@ -12,6 +12,12 @@ pub struct Processor {
     stats: Stats,
 }
 
+impl Default for Processor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Processor {
     pub fn new() -> Self {
         Self {

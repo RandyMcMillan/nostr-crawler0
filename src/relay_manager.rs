@@ -29,7 +29,7 @@ impl RelayManager {
         let relay_client = Client::new_with_opts(&app_keys, opts);
         Self {
             // app_keys,
-            relays: Relays::default(),
+            relays: Relays::new(),
             relay_client,
             processor,
             time_last_event: Self::now(),

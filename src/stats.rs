@@ -6,6 +6,12 @@ pub struct Stats {
     pub count_relays: u64,
 }
 
+impl Default for Stats {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Stats {
     pub fn new() -> Self {
         Stats {

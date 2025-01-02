@@ -7,7 +7,7 @@ pub struct Relays {
 }
 
 impl Relays {
-    pub fn default() -> Self {
+    pub fn new() -> Self {
         Self {
             r: HashSet::default(),
         }

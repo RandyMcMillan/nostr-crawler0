@@ -5,6 +5,12 @@ pub struct PubKeys {
     p: HashMap<XOnlyPublicKey, u64>,
 }
 
+impl Default for PubKeys {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PubKeys {
     pub fn new() -> Self {
         Self {
