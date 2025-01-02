@@ -72,9 +72,9 @@ struct Args {
     #[structopt(name = "hashlist", long = "hl", default_value = "false")]
     /// show hashlist
     flag_hashlist: bool,
-    #[structopt(name = "padded_hashlist", long = "phl", default_value = "false")]
-    /// show padded_hashlist
-    flag_padded_hashlist: bool,
+    #[structopt(name = "hashlist_padded", long = "padded", default_value = "false")]
+    /// show hashlist_padded
+    flag_hashlist_padded: bool,
     #[structopt(name = "commit")]
     arg_commit: Vec<String>,
     #[structopt(name = "spec", last = true)]
@@ -194,12 +194,12 @@ fn run(args: &Args) -> Result<(), Error> {
     for commit in revwalk {
         let commit = commit?;
 
-        if args.flag_hashlist {
-            print_hashlist(&commit);
+        if args.flag_hashlist_padded {
+            print_hashlist_padded(&commit);
             continue;
         }
-        if args.flag_padded_hashlist {
-            print_padded_hashlist(&commit);
+        if args.flag_hashlist {
+            print_hashlist(&commit);
             continue;
         }
 
@@ -296,7 +296,7 @@ fn print_hashlist(commit: &Commit) {
         println!();
     }
 }
-fn print_padded_hashlist(commit: &Commit) {
+fn print_hashlist_padded(commit: &Commit) {
     println!("{:0>64}", commit.id());
 
     if commit.parents().len() > 1 {
