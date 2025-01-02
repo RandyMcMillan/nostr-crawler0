@@ -6,6 +6,12 @@ pub struct Relays {
     r: HashSet<Url>,
 }
 
+impl Default for Relays {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Relays {
     pub fn new() -> Self {
         Self {
