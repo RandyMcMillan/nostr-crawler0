@@ -10,13 +10,13 @@ use git2::{DiffFormat, Error, Pathspec};
 use std::str;
 //use time::Timespec;
 
-use ::time::Timespec;
 use ::time::at;
+use ::time::Timespec;
 use nostr_sdk::prelude::*;
 
-use crate::relay_manager::RelayManager;
 use crate::processor::Processor;
 use crate::processor::APP_SECRET_KEY;
+use crate::relay_manager::RelayManager;
 
 use crate::processor::BOOTSTRAP_RELAY1;
 use crate::processor::BOOTSTRAP_RELAY2;
@@ -212,17 +212,13 @@ pub fn run(args: &CliArgs) -> Result<(), Error> {
         })?;
     }
 
-
     let app_secret_key = SecretKey::from_bech32(APP_SECRET_KEY);
     let app_keys = Keys::new(app_secret_key.expect("REASON"));
     let processor = Processor::new();
     let mut relay_manager = RelayManager::new(app_keys, processor);
-    let _ = relay_manager
-        .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
-        //.await;
+    let _ = relay_manager.run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3]);
+    //.await;
     //relay_manager.processor.dump();
-
-
 
     Ok(())
 }
