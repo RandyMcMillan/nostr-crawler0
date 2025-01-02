@@ -8,7 +8,6 @@ use clap::Parser;
 use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 use std::str;
-//use time::Timespec;
 
 use ::time::at;
 use ::time::Timespec;

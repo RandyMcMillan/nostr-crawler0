@@ -84,7 +84,7 @@ impl RelayManager {
 
         //async {
         let opts = Options::new(); //.wait_for_send(true);
-        let app_keys = Keys::from_sk_str(&APP_SECRET_KEY.to_string()).unwrap();
+        let app_keys = Keys::from_sk_str(APP_SECRET_KEY).unwrap();
         let relay_client = Client::new_with_opts(&app_keys, opts);
         let _ = relay_client.publish_text_note(path, &[]).await;
         let _ = relay_client
