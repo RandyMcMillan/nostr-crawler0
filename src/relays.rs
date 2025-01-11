@@ -55,9 +55,8 @@ impl Relays {
         }
     }
 
-    pub fn dump(&self) {
+    pub fn dump_json_object(&self) {
         let mut count = 0;
-        //println!("Relays: {}", self.r.len());
         print!("[\"RELAYS\",");
         for u in &self.r {
             print!("{{\"{}\":\"{}\"}},", count, u);
@@ -65,6 +64,14 @@ impl Relays {
         }
         print!("{{\"{}\":\"wss://relay.gnostr.org\"}}", count);
         print!("]");
-        //println!();
+    }
+
+    pub fn dump_list(&self) {
+        let mut count = 0;
+        for u in &self.r {
+            print!("{{\"{}\":\"{}\"}}", count, u);
+            count += 1;
+        }
+        print!("{{\"{}\":\"wss://relay.gnostr.org\"}}", count);
     }
 }

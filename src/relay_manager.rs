@@ -23,7 +23,7 @@ use log::debug;
 use log::info;
 use log::trace;
 
-const MAX_ACTIVE_RELAYS: usize = 4; //usize::MAX;
+const MAX_ACTIVE_RELAYS: usize = 2; //usize::MAX;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
 
 /// Keeps a set of active connections to relays
@@ -138,7 +138,7 @@ impl RelayManager {
         debug!("STOPPED");
         debug!("======================================================");
         debug!("\n");
-        self.relays.dump();
+        self.relays.dump_list();
 
         Ok(())
     }
