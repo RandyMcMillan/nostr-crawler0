@@ -194,12 +194,12 @@ fn run(args: &Args) -> Result<(), Error> {
     for commit in revwalk {
         let commit = commit?;
 
-        if args.flag_hashlist_padded {
-            print_hashlist_padded(&commit);
-            continue;
-        }
         if args.flag_hashlist {
             print_hashlist(&commit);
+            continue;
+        }
+        if args.flag_hashlist_padded {
+            print_hashlist_padded(&commit);
             continue;
         }
 
