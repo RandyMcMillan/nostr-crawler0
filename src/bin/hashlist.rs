@@ -69,7 +69,7 @@ struct Args {
     #[structopt(name = "patch", long, short, default_value = "false")]
     /// show commit diff
     flag_patch: bool,
-    #[structopt(name = "hashlist", long = "hl", default_value = "false")]
+    #[structopt(name = "hashlist", long = "hl", default_value = "true")]
     /// show hashlist
     flag_hashlist: bool,
     #[structopt(name = "hashlist_padded", long = "padded", default_value = "false")]
