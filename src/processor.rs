@@ -135,7 +135,8 @@ impl Processor {
                 //println!("{:?}", event);
             }
             _ => {
-                println!("{:?}", event.kind)
+                //println!("{:?}", event.kind)
+                println!("processing...")
             }
         }
     }

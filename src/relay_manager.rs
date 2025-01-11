@@ -19,6 +19,9 @@ use clap::Parser;
 use git2::Repository;
 use std::str;
 
+use log::debug;
+use log::info;
+
 const MAX_ACTIVE_RELAYS: usize = 50;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
 
@@ -75,7 +78,7 @@ impl RelayManager {
         let repo = Repository::open(path)?;
         let revwalk = repo.revwalk()?;
         for commit in revwalk {
-            println!("{:?}", commit);
+            debug!("{:?}", commit);
         }
 
         //async {
@@ -131,30 +134,30 @@ impl RelayManager {
 
         self.wait_and_handle_messages().await?;
 
-        //println!("STOPPED");
-        //println!("======================================================");
-        //println!();
+        debug!("STOPPED");
+        debug!("======================================================");
+        debug!("\n");
         self.relays.dump();
 
         Ok(())
     }
 
     async fn connect(&mut self) -> Result<()> {
-        //let relays = self.relay_client.relays().await;
-        //println!("Connecting to {} relays ...", relays.len());
-        //for u in relays.keys() {
-        //print!("{:?} ", u.to_string())
-        //}
-        //println!();
+        let relays = self.relay_client.relays().await;
+        debug!("Connecting to {} relays ...", relays.len());
+        for u in relays.keys() {
+            debug!("{:?} ", u.to_string())
+        }
+        debug!("\n");
         // Warning: error is not handled here, should check back status
         self.relay_client.connect().await;
-        //println!("Connected");
+        debug!("Connected");
         Ok(())
     }
 
     async fn disconnect(&mut self) -> Result<()> {
         self.relay_client.disconnect().await?;
-        //println!("Disconnected");
+        debug!("Disconnected");
         Ok(())
     }
 
@@ -167,7 +170,7 @@ impl RelayManager {
                 .since(time_start)
                 .until(time_end)])
             .await;
-        //println!("Subscribed to relay events",);
+        debug!("Subscribed to relay events",);
         self.relay_client
             .publish_text_note(format!("{}", time_start), &[])
             .await?;
@@ -179,7 +182,7 @@ impl RelayManager {
 
     async fn unsubscribe(&mut self) -> Result<()> {
         self.relay_client.unsubscribe().await;
-        //println!("Unsubscribed from relay events ...");
+        debug!("Unsubscribed from relay events ...");
         Ok(())
     }
 
@@ -187,7 +190,7 @@ impl RelayManager {
         let connected_relays = self.relay_client.relays().await.len();
         let available_relays = self.relays.count();
         if connected_relays < MAX_ACTIVE_RELAYS && available_relays > connected_relays {
-            println!(
+            debug!(
                 "connected_relays={} available_relays={}",
                 connected_relays, available_relays
             );
@@ -215,7 +218,7 @@ impl RelayManager {
 
         let mut notifications = self.relay_client.notifications();
         while let Ok(notification) = notifications.recv().await {
-            //println!("relaynotif {:?}", notification);
+            debug!("relaynotif {:?}", notification);
             match notification {
                 RelayPoolNotification::Event(_url, event) => {
                     self.handle_event(&event);
@@ -226,7 +229,7 @@ impl RelayManager {
                     RelayMessage::EndOfStoredEvents(_sub_id) => {
                         eose_relays.insert(url.clone());
                         let n1 = eose_relays.len();
-                        //let n2 = self.relay_client.relays().await.len();
+                        let n2 = self.relay_client.relays().await.len();
                         let mut n_connected = 0;
                         let mut n_connecting = 0;
                         let relays = self.relay_client.relays().await;
@@ -237,11 +240,11 @@ impl RelayManager {
                                 _ => {}
                             }
                         }
-                        //println!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
+                        debug!("Received EOSE from {url}, total {n1} ({n2} relays, {n_connected} connected {n_connecting} connecting)");
 
                         // Check for stop: All connected/connecting relays have signalled EOSE, or
                         if n1 >= (n_connected + n_connecting) && (n_connected + n_connecting > 0) {
-                            //println!("STOPPING; All relays signalled EOSE ({n1})");
+                            debug!("STOPPING; All relays signalled EOSE ({n1})");
                             break;
                         }
                     }
@@ -250,7 +253,7 @@ impl RelayManager {
                         event: _,
                     } => {}
                     _ => {
-                        //println!("{{\"{:?}\":\"{url}\"}}", relaymsg);
+                        debug!("{{\"{:?}\":\"{url}\"}}", relaymsg);
                     }
                 },
                 RelayPoolNotification::Shutdown => break,
@@ -259,10 +262,10 @@ impl RelayManager {
             let last_age = self.get_last_event_ago();
             let n1 = eose_relays.len();
             if last_age > 20 && n1 >= 2 {
-                //println!(
-                //    "STOPPING; There were some EOSE-s, and no events in the past {} secs",
-                //    last_age
-                //);
+                debug!(
+                    "STOPPING; There were some EOSE-s, and no events in the past {} secs",
+                    last_age
+                );
                 break;
             }
 
@@ -276,123 +279,123 @@ impl RelayManager {
     fn handle_event(&mut self, event: &Event) {
         match event.kind {
             Kind::Metadata => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::TextNote => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::EncryptedDirectMessage => {
-                println!("{:?}", event.kind);
+                info!("{:?}", event.kind);
             }
             Kind::EventDeletion => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Repost => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Reaction => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ChannelCreation => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ChannelMetadata => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ChannelMessage => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ChannelHideMessage => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ChannelMuteUser => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::PublicChatReserved45 => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::PublicChatReserved46 => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::PublicChatReserved47 => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::PublicChatReserved48 => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::PublicChatReserved49 => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Reporting => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::ZapRequest => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Zap => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Authentication => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::NostrConnect => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::LongFormTextNote => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
                 self.update_event_time();
                 // count p tags
-                //let mut cnt = 0;
+                let mut cnt = 0;
                 for t in &event.tags {
-                    if let Tag::PubKey(_pk, Some(ss)) = t {
-                        // state.pubkeys.add(pk);
-                        //if let Some(ss) = s {
-                        //println!("    {ss}");
-                        let _ = self.relays.add(ss);
-                        //}
-                        //cnt += 1;
-                    }
+                    //if let Tag::PubKey(_pk, Some(ss)) = t {
+                    //  state.pubkeys.add(pk);
+                    //if let Some(ss) = s {
+                    //debug!("    {ss}");
+                    //let _ = self.relays.add(ss);
+                    //}
+                    cnt += 1;
+                    //}
                 }
             }
             Kind::RelayList => {
                 println!("{:?}", event.kind);
             }
-            //Kind::Replaceable(u16) => {
-            //    println!("{:?}", event.kind);
-            //}
-            //Kind::Ephemeral(u16) => {
-            //    println!("{:?}", event.kind);
-            //}
-            //Kind::ParameterizedReplaceable(u16) => {
-            //    println!("{:?}", event.kind);
-            //}
-            //Kind::Custom(u64) => {
-            //  println!("{:?}", event.kind);
-            //}
+            Kind::Replaceable(u16) => {
+                debug!("{:?}", event.kind);
+            }
+            Kind::Ephemeral(u16) => {
+                debug!("{:?}", event.kind);
+            }
+            Kind::ParameterizedReplaceable(u16) => {
+                debug!("{:?}", event.kind);
+            }
+            Kind::Custom(u64) => {
+                debug!("{:?}", event.kind);
+            }
             Kind::ContactList => {
                 self.update_event_time();
                 // count p tags
-                //let mut count = 0;
+                let mut count = 0;
                 for t in &event.tags {
-                    if let Tag::PubKey(_pk, Some(ss)) = t {
-                        // state.pubkeys.add(pk);
+                    if let Tag::PubKey(pk, Some(ss)) = t {
+                        //state.pubkeys.add(pk);
                         //if let Some(ss) = s {
-                        //println!("    {ss}");
+                        debug!("    {ss}");
                         let _ = self.relays.add(ss);
                         let _pub_future = self.relay_client.publish_text_note(ss.to_string(), &[]);
                         //}
-                        //println!("    {}", count);
-                        //count += 1;
+                        debug!("    {}", count);
+                        count += 1;
                     }
                 }
             }
             Kind::RecommendRelay => {
                 self.update_event_time();
-                println!("\n318:Relay(s): {}\n", event.content);
+                debug!("\n393:Relay(s): {}\n", event.content);
                 let _ = self.relays.add(&event.content);
             }
             _ => {
-                println!("Unsupported event {:?}", event.kind)
+                debug!("Unsupported event {:?}", event.kind)
             }
         }
     }
