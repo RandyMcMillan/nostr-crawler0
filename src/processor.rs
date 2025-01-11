@@ -1,10 +1,11 @@
 use crate::pubkeys::PubKeys;
 use crate::stats::Stats;
+use log::{debug, info};
 use nostr_sdk::prelude::{Event, Kind, Tag, Timestamp};
 
 pub const BOOTSTRAP_RELAY1: &str = "wss://nos.lol";
 pub const BOOTSTRAP_RELAY2: &str = "wss://relay.damus.io";
-pub const BOOTSTRAP_RELAY3: &str = "wss://relay.plebstr.com";
+pub const BOOTSTRAP_RELAY3: &str = "wss://e.nos.lol";
 //pub const APP_SECRET_KEY: &str = "nsec1ufnus6pju578ste3v90xd5m2decpuzpql2295m3sknqcjzyys9ls0qlc85";
 pub const APP_SECRET_KEY: &str = "nsec1uwcvgs5clswpfxhm7nyfjmaeysn6us0yvjdexn9yjkv3k7zjhp2sv7rt36";
 pub struct Processor {
@@ -33,9 +34,9 @@ impl Processor {
 
     pub fn handle_event(&mut self, event: &Event) {
         //TODO: forward (proxy)
-        //println!("{:?}", event);
-
-        // println!("age {:?}  created_at {:?}", Self::age(event.created_at), event.created_at);
+        //println!("{:?}", event.id);
+        //println!("{:}", event.as_json());
+        //println!("age {:?}  created_at {:?}", Self::age(event.created_at), event.created_at);
         match event.kind {
             //Kind::Metadata => {
             //    println!("{:?}", event.kind);

@@ -21,8 +21,9 @@ use std::str;
 
 use log::debug;
 use log::info;
+use log::trace;
 
-const MAX_ACTIVE_RELAYS: usize = 50;
+const MAX_ACTIVE_RELAYS: usize = 4; //usize::MAX;
 const PERIOD_START_PAST_SECS: u64 = 6 * 60 * 60;
 
 /// Keeps a set of active connections to relays
@@ -37,7 +38,7 @@ pub struct RelayManager {
 
 impl RelayManager {
     pub fn new(app_keys: Keys, processor: Processor) -> Self {
-        let opts = Options::new(); //.wait_for_send(true);
+        let opts = Options::new(); //.wait_for_send(false);
         let relay_client = Client::new_with_opts(&app_keys, opts);
         let _proxy = Some(SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 9050)));
         Self {
@@ -78,44 +79,44 @@ impl RelayManager {
         let repo = Repository::open(path)?;
         let revwalk = repo.revwalk()?;
         for commit in revwalk {
-            debug!("{:?}", commit);
+            println!("\n\n\n\n\n{:?}\n\n\n\n", commit);
         }
 
         //async {
         let opts = Options::new(); //.wait_for_send(true);
         let app_keys = Keys::from_sk_str(APP_SECRET_KEY).unwrap();
         let relay_client = Client::new_with_opts(&app_keys, opts);
-        let _ = relay_client.publish_text_note(path, &[]).await;
-        let _ = relay_client
-            .publish_text_note("relay_manager:1<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("2<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("3<--------------------------<<<<<", &[])
-            .await;
-        let _ = relay_client
-            .publish_text_note("4<--------------------------<<<<<", &[])
-            .await;
+        //let _ = relay_client.publish_text_note(path, &[]).await;
+        //let _ = relay_client
+        //    .publish_text_note("relay_manager:1<--------------------------<<<<<", &[])
+        //    .await;
+        //let _ = relay_client
+        //    .publish_text_note("2<--------------------------<<<<<", &[])
+        //    .await;
+        //let _ = relay_client
+        //    .publish_text_note("3<--------------------------<<<<<", &[])
+        //    .await;
+        //let _ = relay_client
+        //    .publish_text_note("4<--------------------------<<<<<", &[])
+        //    .await;
         let _ = relay_client.publish_text_note("#gnostr", &[]).await;
         //};
 
         for r in some_relays {
             //self.relay_client.add_relay(r, None).await?;
             self.relay_client.add_relay(r.clone(), None).await?;
-            self.relay_client
-                .publish_text_note("relay_manager:5<--------<<<<<<<<<", &[])
-                .await?;
-            self.relay_client
-                .publish_text_note("6<--------<<<<<<<<<", &[])
-                .await?;
-            self.relay_client
-                .publish_text_note("7<--------<<<<<<<<<", &[])
-                .await?;
-            self.relay_client
-                .publish_text_note("888888<--------<<<<<<<<<", &[])
-                .await?;
+            //self.relay_client
+            //    .publish_text_note("relay_manager:5<--------<<<<<<<<<", &[])
+            //    .await?;
+            //self.relay_client
+            //    .publish_text_note("6<--------<<<<<<<<<", &[])
+            //    .await?;
+            //self.relay_client
+            //    .publish_text_note("7<--------<<<<<<<<<", &[])
+            //    .await?;
+            //self.relay_client
+            //    .publish_text_note("888888<--------<<<<<<<<<", &[])
+            //    .await?;
             self.relay_client
                 .publish_text_note(format!("{}", r), &[])
                 .await?;
@@ -146,7 +147,7 @@ impl RelayManager {
         let relays = self.relay_client.relays().await;
         debug!("Connecting to {} relays ...", relays.len());
         for u in relays.keys() {
-            debug!("{:?} ", u.to_string())
+            trace!("{:?} ", u.to_string())
         }
         debug!("\n");
         // Warning: error is not handled here, should check back status
@@ -358,7 +359,7 @@ impl RelayManager {
                 }
             }
             Kind::RelayList => {
-                println!("{:?}", event.kind);
+                debug!("{:?}", event.kind);
             }
             Kind::Replaceable(u16) => {
                 debug!("{:?}", event.kind);

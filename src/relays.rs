@@ -1,3 +1,5 @@
+use log::info;
+use log::trace;
 use nostr_sdk::prelude::Url;
 use std::collections::HashSet;
 
@@ -46,12 +48,11 @@ impl Relays {
     }
 
     pub fn print(&self) {
-        //println!("43:Relays: {}", self.r.len());
-        //print!("    ");
-        //for u in &self.r {
-        //print!("{} ", u.to_string());
-        //}
-        //println!();
+        trace!("50:Relays: {}", self.r.len());
+        trace!("    ");
+        for u in &self.r {
+            trace!("{} ", u.to_string());
+        }
     }
 
     pub fn dump(&self) {
