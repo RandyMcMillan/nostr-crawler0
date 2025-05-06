@@ -15,7 +15,7 @@ use clap::Parser;
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
+    //env_logger::init();
     let args = CliArgs::parse();
 
     match nostr_relays::run(&args) {
@@ -27,7 +27,7 @@ async fn main() {
             let _ = relay_manager
                 .run(vec![BOOTSTRAP_RELAY1, BOOTSTRAP_RELAY2, BOOTSTRAP_RELAY3])
                 .await;
-            //relay_manager.processor.dump();
+            relay_manager.processor.dump();
         }
         Err(e) => println!("error: {}", e),
     }
