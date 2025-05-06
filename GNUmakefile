@@ -1,3 +1,5 @@
 -:
 	@cargo -q b 2>/dev/null;
-	@for relay in $(shell ./target/debug/nostr-crawler0); do echo $$relay; done
+	@./target/debug/git-log | gnostr-xq || \
+		cargo install gnostr-xq
+#@for relay in $(shell ./target/debug/git-log); do echo $$relay; done
