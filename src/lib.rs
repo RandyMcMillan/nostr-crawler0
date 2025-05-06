@@ -210,7 +210,7 @@ pub fn run(args: &CliArgs) -> Result<()> {
     // print!
     for commit in revwalk {
         let commit = commit?;
-        print_commit(&commit);
+        //print_commit(&commit);
         if !args.flag_patch || commit.parents().len() > 1 {
             continue;
         }
@@ -262,7 +262,7 @@ pub fn log_message_matches(msg: Option<&str>, grep: &Option<String>) -> bool {
 }
 
 pub fn print_commit(commit: &Commit) {
-    println!("commit {}", commit.id());
+    //println!("commit {}", commit.id());
 
     if commit.parents().len() > 1 {
         print!("Merge:");
